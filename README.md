@@ -1,8 +1,19 @@
+
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Make sure that your Android phone is in developer mode. 
+To turn on developer mode on Pixel 6a, Open Settings > About Phone and 
+tap the build number 6 times.
+
+Connect Pixelbook and Phone with a USB C cable.
+To check connection:
+$ adb devices
+
 
 ## Step 1: Start Metro
 
