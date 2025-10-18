@@ -72,31 +72,35 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Leaf Charging</Text>
-      <Text style={styles.label}>Charging starts at: {moment(chargingStartTime).format('h:mm A')}</Text>
-      <Button onPress={showTimepicker} title="Change" />
-      {showTimePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={chargingStartTime}
-          mode={'time'}
-          is24Hour={false}
-          display="default"
-          onChange={onStartTimeChange}
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Charging starts at: {moment(chargingStartTime).format('h:mm A')}</Text>
+        <Button onPress={showTimepicker} title="Change" />
+        {showTimePicker && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={chargingStartTime}
+            mode={'time'}
+            is24Hour={false}
+            display="default"
+            onChange={onStartTimeChange}
+          />
+        )}
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Current charge (%): </Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="Enter charge percentage"
+          value={percentCharge.toString()}
+          onChangeText={handlePercentChargeChange}
         />
-      )}
-      
-      <Text style={styles.label}>Current charge (%): </Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="Enter charge percentage"
-        value={percentCharge.toString()}
-        onChangeText={handlePercentChargeChange}
-      />
+      </View>
       <Text style={styles.result}>
         Time to charge {LEAF_MAX_CHARGE}%: {chargingTime.toFixed(1)} hr
       </Text>
-      <Text style={styles.result}>
+      <Text style={styles.charging_end_time}>
         Charging ends at: {chargingEndTime}
       </Text>
     </View>
@@ -111,39 +115,55 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 50,
+    marginBottom: 25,
     paddingVertical: 8,
     borderWidth: 4,
     borderColor: '#20232a',
-    borderRadius: 12,
+    borderRadius: 10,
     backgroundColor: '#61dafb',
     color: '#20232a',
     textAlign: 'center',
     fontSize: 30,
     fontWeight: 'bold',
   },
-  label: {
-    marginTop: 16,
-    color: '#20232a',
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 10,
+  inputContainer: {
+    flexDirection: 'row', // Arrange label and input horizontally
+    alignItems: 'center', // Vertically align items in the container
+    justifyContent: 'space-between', // Add space between label and input
+    marginVertical: 10, // Add vertical margin for spacing
   },
-
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  label: {
+    fontSize: 16,
     fontWeight: 'bold',
+    marginRight: 10, // Add some right margin to the label
+  },
+  input: {
+    flex: 1, // Take remaining space
+    height: 40,
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 5,
   },
   result: {
     marginTop: 16,
     paddingVertical: 8,
     textAlign: 'center',
     fontSize: 20,
-    fontWeight: 'bold',
+    borderWidth: 2,
+    color: '#20232a',
+    borderRadius: 10,
+  },
+  charging_end_time: {
+    marginTop: 16,
+    paddingVertical: 8,
+    textAlign: 'center',
+    fontSize: 20,
+    borderWidth: 2,
+    color: '#20232a',
+    borderRadius: 10,
+    backgroundColor: '#d0fffe',
   }
+
 });
 
 export default App;
