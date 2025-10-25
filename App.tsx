@@ -16,15 +16,25 @@ const LEAF_BATTERY_SIZE = 62; // kWh
 const LEAF_MAX_CHARGE = 80; // %
 
 const App = () => {
-  const [percentCharge, setPercentCharge] = useState(50);
+  const newDateWithHour = (currentHour: Int32) => {
+    const date = new Date();
+    date.setHours(currentHour, 0, 0);
+    return date;
+  };
+
+
+  const [percentCharge, setPercentCharge] = useState(30);
   const [chargingTime, setChargingTime] = useState(0);
-  const [chargingStartTime, setChargingStartTime] = useState(new Date());
+  //const [chargingStartTime, setChargingStartTime] = useState(new Date().setHours(20,0,0));
+  const [chargingStartTime, setChargingStartTime] = useState(newDateWithHour(20));
+  //const [chargingStartTime, setChargingStartTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [chargingEndTime, setChargingEndTime] = useState('');
 
   useEffect(() => {
-    calculateChargingEndTime();
-  }, [chargingStartTime, chargingTime]);
+    //calculateChargingEndTime();
+    recalculate();
+  }, [chargingStartTime, percentCharge]);
 
   const calculateChargingTime = (batterySize:Float, chargingRate: Float, maxCharge:Float, currentCharge: Float) => {
     if (currentCharge >= maxCharge) {
@@ -38,18 +48,26 @@ const App = () => {
     return timeToCharge;
   };
 
+  const recalculate = () => {
+    const chargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
+    setChargingTime(chargingTime);
+    const endTime = calculateChargingEndTime()
+    setChargingEndTime(endTime.format('h:mm A'));
+  };
+
+
   const handlePercentChargeChange = (value: string) => {
     const percentCharge = parseFloat(value);
     if (!isNaN(percentCharge)) {
       setPercentCharge(percentCharge);
-      const chargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
-      setChargingTime(chargingTime);
+      //const chargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
+      //setChargingTime(chargingTime);
     } else {
       setPercentCharge(0); // Reset to 0 if input is invalid
     }
   };
 
-   const onStartTimeChange = (event: any, selectedDate: any) => {
+  const onStartTimeChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || chargingStartTime;
     setShowTimePicker(Platform.OS === 'ios');
     setChargingStartTime(currentDate);
@@ -66,7 +84,7 @@ const App = () => {
   const calculateChargingEndTime = () => {
     const startTime = moment(chargingStartTime);
     const endTime = startTime.add(chargingTime, 'hours');
-    setChargingEndTime(endTime.format('h:mm A'));
+    return endTime
   };
 
   return (
