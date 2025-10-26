@@ -36,6 +36,13 @@ const App = () => {
     recalculate();
   }, [chargingStartTime, percentCharge]);
 
+  //useEffect(() => {
+  //  //calculateChargingEndTime();
+  //  console.log("DBG: useEffect chargingTime=", chargingTime);
+  //}, [chargingTime]);
+
+  // ========================= MAIN CALCULATION =======================================
+
   const calculateChargingTime = (batterySize:Float, chargingRate: Float, maxCharge:Float, currentCharge: Float) => {
     if (currentCharge >= maxCharge) {
       return 0; // No charging needed
@@ -48,22 +55,37 @@ const App = () => {
     return timeToCharge;
   };
 
+  const calculateChargingEndTime = (newChargingTime:Float) => {
+    const startTime = moment(chargingStartTime);
+    //console.log("DBG: startTime=", startTime.format('h:mm A'));
+    const endTime = startTime.add(newChargingTime, 'hours');
+    return endTime
+  };
+
   const recalculate = () => {
-    const chargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
-    setChargingTime(chargingTime);
-    const endTime = calculateChargingEndTime()
+    //console.log("DBG: percentCharge=", percentCharge);
+    let newChargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
+    //console.log("DBG: newChargingTime=", newChargingTime);
+    //console.log("DBG: before chargingTime=", chargingTime);
+    setChargingTime(newChargingTime);
+    //console.log("DBG: after chargingTime=", chargingTime);
+    const endTime = calculateChargingEndTime(newChargingTime)
+    //console.log("DBG: endTime=", endTime.format('h:mm A'));
     setChargingEndTime(endTime.format('h:mm A'));
   };
 
+  // ========================= /MAIN CALCULATION ======================================
 
   const handlePercentChargeChange = (value: string) => {
-    const percentCharge = parseFloat(value);
-    if (!isNaN(percentCharge)) {
-      setPercentCharge(percentCharge);
+    const newPercentCharge = parseFloat(value);
+    if (!isNaN(newPercentCharge)) {
+      setPercentCharge(newPercentCharge);
       //const chargingTime = calculateChargingTime(LEAF_BATTERY_SIZE, LEAF_TRICLE_CHARGING_RATE, LEAF_MAX_CHARGE, percentCharge);
       //setChargingTime(chargingTime);
     } else {
+      //console.log("DBG: NaN chargingTime=", chargingTime);
       setPercentCharge(0); // Reset to 0 if input is invalid
+      //console.log("DBG: NaN chargingTime=", chargingTime);
     }
   };
 
@@ -81,11 +103,6 @@ const App = () => {
     showMode('time');
   };
 
-  const calculateChargingEndTime = () => {
-    const startTime = moment(chargingStartTime);
-    const endTime = startTime.add(chargingTime, 'hours');
-    return endTime
-  };
 
   return (
     <View style={styles.container}>
